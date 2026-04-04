@@ -13,6 +13,7 @@ void Game::gameLoop() noexcept {
     mStartTimePoint = std::chrono::steady_clock::now();
 
     gameInput();
+    mSnake.move(mSnake.getCurrentDirection());
     drawInFramebuffer();
 
     mEndTimePoint = std::chrono::steady_clock::now();
@@ -32,16 +33,16 @@ void Game::gameInput() noexcept {
       mGameIsRunning = false;
       break;
     case 'w':
-      mSnake.move(Up);
+      mSnake.setNewDirection(Up);
       break;
     case 's':
-      mSnake.move(Down);
+      mSnake.setNewDirection(Down);
       break;
     case 'a':
-      mSnake.move(Left);
+      mSnake.setNewDirection(Left);
       break;
     case 'd':
-      mSnake.move(Right);
+      mSnake.setNewDirection(Right);
       break;
     case 'e':
       mSnake.addTail();
@@ -52,7 +53,6 @@ void Game::gameInput() noexcept {
 
 void Game::drawInFramebuffer() noexcept {
   mFramebuffer.clear();
-  mSnake.move(mSnake.getCurrentDirection());
 
   mFramebuffer.addSym(mApplePos.first, mApplePos.second, '$');
   for (const auto &head : mSnake.getSnakeHeads())

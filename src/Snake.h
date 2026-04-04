@@ -25,6 +25,7 @@ struct Snake final {
   }
 
   void move(const Direction &moveDir) noexcept;
+  void setNewDirection(const Direction &newDir) noexcept;
   void addTail() noexcept;
 
 private:

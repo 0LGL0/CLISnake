@@ -47,3 +47,7 @@ void Snake::addTail() noexcept {
   }
   mSnake.push_front(newTail);
 }
+
+void Snake::setNewDirection(const Direction &newDir) noexcept {
+  mMoveDirection = newDir;
+}
