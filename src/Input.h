@@ -7,12 +7,16 @@ public:
   explicit Input() noexcept { setupNewTerminalMode(); }
   ~Input() noexcept { resetTerminalMode(); }
 
-  int kbhit() noexcept;
+  [[nodiscard]] bool kbhit() noexcept;
+  [[nodiscard]] int getPressedKey() noexcept;
 
 private:
   void setupNewTerminalMode() noexcept;
 
   void resetTerminalMode() noexcept;
 
-  struct termios storedMode{};
+  struct termios mStoredMode{};
+  int mOldf = 0;
+  bool mHasBufferedKey = false;
+  char mBufferedKey = 0;
 };

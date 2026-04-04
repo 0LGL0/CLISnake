@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Input.h"
 #include <thread>
 
 Game::Game() noexcept
@@ -26,7 +27,7 @@ void Game::gameLoop() noexcept {
 
 void Game::gameInput() noexcept {
   if (mInput.kbhit()) {
-    char input = getchar();
+    const int input = mInput.getPressedKey();
     switch (input) {
       using enum Snake::Direction;
     case 'q':

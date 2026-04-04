@@ -4,41 +4,45 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-int Input::kbhit() noexcept {
-  struct termios oldt, newt;
-  int ch;
-  int oldf;
+bool Input::kbhit() noexcept {
+  if (mHasBufferedKey)
+    return true;
 
-  tcgetattr(STDIN_FILENO, &oldt);
-  newt = oldt;
-  newt.c_lflag &= ~(ICANON | ECHO);
-  tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-  oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
-  fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+  char ch;
+  ssize_t n = read(STDIN_FILENO, &ch, 1);
 
-  ch = getchar();
+  if (n > 0) {
+    mBufferedKey = ch;
+    mHasBufferedKey = true;
+    return true;
+  }
+  return false;
+}
 
-  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-  fcntl(STDIN_FILENO, F_SETFL, oldf);
-
-  if (ch != EOF) {
-    ungetc(ch, stdin);
-    return 1;
+int Input::getPressedKey() noexcept {
+  if (mHasBufferedKey) {
+    mHasBufferedKey = false;
+    return static_cast<unsigned char>(mBufferedKey);
   }
   return 0;
 }
 
 void Input::setupNewTerminalMode() noexcept {
   struct termios newMode{};
-  tcgetattr(0, &storedMode);
-  newMode = storedMode;
+  tcgetattr(0, &mStoredMode);
+  newMode = mStoredMode;
 
-  newMode.c_lflag &= (~ICANON);
-  newMode.c_lflag &= (~ECHO);
+  newMode.c_lflag &= ~(ICANON | ECHO);
   newMode.c_cc[VTIME] = 0;
-  newMode.c_cc[VMIN] = 1;
+  newMode.c_cc[VMIN] = 0;
 
   tcsetattr(0, TCSANOW, &newMode);
+
+  mOldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+  fcntl(STDIN_FILENO, F_SETFL, mOldf | O_NONBLOCK);
 }
 
-void Input::resetTerminalMode() noexcept { tcsetattr(0, TCSANOW, &storedMode); }
+void Input::resetTerminalMode() noexcept {
+  tcsetattr(0, TCSANOW, &mStoredMode);
+  fcntl(STDIN_FILENO, F_SETFL, mOldf);
+}
