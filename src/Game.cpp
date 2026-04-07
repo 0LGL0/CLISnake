@@ -1,27 +1,24 @@
 #include "Game.h"
 #include "Input.h"
-#include <thread>
 
 Game::Game() noexcept
     : mApple(mFramebuffer.getWinSize()), mSnake(mFramebuffer.getWinSize()),
       mFrameLock(1000 / 10), mGameIsRunning(true),
       mApplePos(mApple.getNewPos()) {
   mFramebuffer.hideCursor();
+  mTime.setFrameRateTarget(10);
 }
 
 void Game::gameLoop() noexcept {
   while (mGameIsRunning) {
-    mStartTimePoint = std::chrono::steady_clock::now();
+    mTime.setStartOfGameLoopTimePoint();
 
     gameInput();
     mSnake.move(mSnake.getCurrentDirection());
     drawInFramebuffer();
 
-    mEndTimePoint = std::chrono::steady_clock::now();
-    auto dt = mEndTimePoint - mStartTimePoint;
-
-    if (dt < mFrameLock)
-      std::this_thread::sleep_for(mFrameLock - dt);
+    mTime.setEndOfGameLoopTimePoint();
+    mTime.setupFrameRateLimit();
   }
 }
 

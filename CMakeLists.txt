@@ -11,6 +11,7 @@ add_library(Core STATIC
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Snake.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Apple.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Game.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/Time.cpp"
 )
 
 add_executable(CLISnake main.cpp)

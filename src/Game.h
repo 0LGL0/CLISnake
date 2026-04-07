@@ -4,8 +4,7 @@
 #include "Framebuffer.h"
 #include "Input.h"
 #include "Snake.h"
-
-#include <chrono>
+#include "Time.h"
 
 class Game final {
 public:
@@ -22,6 +21,7 @@ private:
   Snake mSnake;
   Apple mApple;
   Input mInput;
+  Time mTime;
 
   std::chrono::time_point<std::chrono::steady_clock> mStartTimePoint{},
       mEndTimePoint{};
