@@ -1,10 +1,11 @@
 #pragma once
 
 #include "Apple.h"
-#include "Framebuffer.h"
-#include "Input.h"
-#include "Snake.h"
-#include "Time.h"
+#include "Framework/Framebuffer.h"
+#include "Framework/Input.h"
+#include "Framework/Time.h"
+
+#include "Framework/World.h"
 
 class Game final {
 public:
@@ -17,16 +18,14 @@ private:
   void gameInput() noexcept;
   void drawInFramebuffer() noexcept;
 
+private:
   FrameBuffer mFramebuffer;
-  Snake mSnake;
   Apple mApple;
   Input mInput;
   Time mTime;
 
-  std::chrono::time_point<std::chrono::steady_clock> mStartTimePoint{},
-      mEndTimePoint{};
-  std::chrono::milliseconds mFrameLock;
-
   bool mGameIsRunning;
   std::pair<uint16_t, uint16_t> mApplePos;
+
+  EntityID mSnakeHead;
 };
